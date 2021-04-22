@@ -14,16 +14,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Shortly',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        primaryColor: HSLColor.fromAHSL(1, 180, 0.66, 0.49).toColor(), // cyan
+        backgroundColor: HSLColor.fromAHSL(1, 0, 0, 0.75).toColor(), //gray
+        buttonColor: HSLColor.fromAHSL(1, 180, 0.66, 0.49).toColor(), // cyan
+        primaryColorDark:
+            HSLColor.fromAHSL(1, 257, 0.27, 0.26).toColor(), //dark violet
+        errorColor: HSLColor.fromAHSL(1, 0, 0.87, 0.67).toColor(), //red
       ),
       initialRoute: Routes.homeScreen,
       routes: {
