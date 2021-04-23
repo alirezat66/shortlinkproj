@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +10,7 @@ import 'package:shortening_mobile_app/constant/constant_images.dart';
 import 'package:shortening_mobile_app/constant/constant_sizes.dart';
 import 'package:shortening_mobile_app/constant/constant_strings.dart';
 import 'package:shortening_mobile_app/data/model/advance_note.dart';
+import 'package:shortening_mobile_app/data/model/footer_menu.dart';
 import 'package:shortening_mobile_app/widget/advance_item_widget.dart';
 import 'package:shortening_mobile_app/widget/advance_note_list_view_widget.dart';
 import 'package:shortening_mobile_app/widget/rounded_button_widget.dart';
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     List<AdvanceNote> advanceNoteList = AdvanceNoteList().list;
+    List<FooterMenu> _footerList = StringValue.footerMenu;
     final _shortLinkTextController = TextEditingController();
 
     SystemChrome.setEnabledSystemUIOverlays([]);
@@ -44,15 +47,97 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Positioned(
                   top: size.height -
-                      ConstantSize.toolbarHeight -
+                      kToolbarHeight -
                       ConstantSize.homeScreenInputFormHeight / 2.5,
                   child: buildInputLinkPart(
                       size, context, _shortLinkTextController),
                 ),
               ],
             ),
+            buildBoostPart(size, context),
+            buildFooterPart(size, _footerList)
           ],
         ),
+      ),
+    );
+  }
+
+  Container buildFooterPart(Size size, List<FooterMenu> menu) {
+    return Container(
+        width: size.width,
+        color: ConstantColors.veryDarkViolet,
+        child: Column(
+          children: [
+            SizedBox(
+              height: ConstantSize.largePadding,
+            ),
+            SvgPicture.asset(
+              ImageAddress.logoImage,
+              color: Colors.white,
+            ),
+            SizedBox(
+              height: ConstantSize.largePadding,
+            ),
+            FooterList(menu: menu),
+            Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                      icon: FaIcon(FontAwesomeIcons.facebookSquare,
+                          color: Colors.white),
+                      onPressed: () {}),
+                  IconButton(
+                      icon:
+                          FaIcon(FontAwesomeIcons.twitter, color: Colors.white),
+                      onPressed: () {}),
+                  IconButton(
+                      icon: FaIcon(FontAwesomeIcons.pinterest,
+                          color: Colors.white),
+                      onPressed: () {}),
+                  IconButton(
+                      icon: FaIcon(FontAwesomeIcons.instagram,
+                          color: Colors.white),
+                      onPressed: () {}),
+                ]),
+            SizedBox(
+              height: ConstantSize.extraLargePadding,
+            ),
+          ],
+        ));
+  }
+
+  Container buildBoostPart(Size size, BuildContext context) {
+    return Container(
+      width: size.width,
+      height: 300,
+      color: Theme.of(context).primaryColorDark,
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          SvgPicture.asset(ImageAddress.backgroundBoostMobile),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: ConstantSize.largePadding,
+                      right: ConstantSize.largePadding),
+                  child: AutoSizeText('Boosts your links today',
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline4
+                          .copyWith(color: Colors.white, height: 1.5)),
+                ),
+                SizedBox(height: ConstantSize.normalPadding),
+                buildStartButton(size),
+              ]),
+            ],
+          )
+        ],
       ),
     );
   }
@@ -103,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Container buildFirstPage(Size size, BuildContext context) {
     return Container(
-      height: size.height - ConstantSize.toolbarHeight,
+      height: size.height - kToolbarHeight,
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -141,15 +226,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: ConstantSize.largePadding),
-            child: RoundedButton(
-              text: StringValue.startButton,
-              onPressed: _onClickStartButton,
-              radius: ConstantSize.largeRadius,
-              width: size.width / 2,
-            ),
+            child: buildStartButton(size),
           ),
         ],
       ),
+    );
+  }
+
+  RoundedButton buildStartButton(Size size) {
+    return RoundedButton(
+      text: StringValue.startButton,
+      onPressed: _onClickStartButton,
+      radius: ConstantSize.largeRadius,
+      width: size.width / 2,
     );
   }
 
@@ -239,7 +328,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: ConstantSize.toolbarHeight,
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -252,9 +340,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: SvgPicture.asset('images/logo.svg'),
+        title: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SvgPicture.asset(ImageAddress.logoImage),
+            ),
+          ],
         ));
   }
 
@@ -271,5 +363,79 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onChangedLinkText(String value) {
     if (value.isNotEmpty) _shortenLinkKey.currentState.validate();
+  }
+}
+
+class FooterList extends StatelessWidget {
+  final List<FooterMenu> menu;
+  const FooterList({
+    Key key,
+    @required this.menu,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: menu.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: FooterTitleText(
+              text: menu[index].title,
+            ),
+            subtitle: ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: menu[index].subStrings.length,
+                itemBuilder: (context, subIndex) {
+                  return FooterSubTitleText(
+                      text: menu[index].subStrings[subIndex]);
+                }),
+          );
+        });
+  }
+}
+
+class FooterSubTitleText extends StatelessWidget {
+  final String text;
+  const FooterSubTitleText({
+    Key key,
+    @required this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: ConstantSize.extraSmallPadding),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.overline.copyWith(
+              color: ConstantColors.grayishViolet,
+            ),
+      ),
+    );
+  }
+}
+
+class FooterTitleText extends StatelessWidget {
+  final String text;
+  const FooterTitleText({
+    Key key,
+    @required this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: ConstantSize.smallPadding),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style:
+            Theme.of(context).textTheme.caption.copyWith(color: Colors.white),
+      ),
+    );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:shortening_mobile_app/data/model/footer_menu.dart';
+
 class StringValue {
   static const String homeTitle = 'More than just shorter links';
   static const String homeDescription =
@@ -16,4 +18,18 @@ class StringValue {
   static const String advancedListTitleThird = 'Fully Customizable';
   static const String advancedListDescriptionThird =
       'Improve brand awareness and content discoverability through Customizable links, supercharging audience engagement.';
+  static List<FooterMenu> footerMenu = [
+    FooterMenu(
+      'Features',
+      ['Link Shortening', 'Branded Links', 'Analytics'],
+    ),
+    FooterMenu(
+      'Resources',
+      ['Blog', 'Developers', 'Support'],
+    ),
+    FooterMenu(
+      'Company',
+      ['About', 'Our Team', 'Careers', 'Contact'],
+    ),
+  ];
 }

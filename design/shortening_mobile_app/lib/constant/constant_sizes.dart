@@ -9,6 +9,5 @@ class ConstantSize {
   static const double extraSmallRadius = 4;
   static const double smallRadius = 8;
   static const double circleIconContainerSize = 70;
-  static const double toolbarHeight = 90;
   static const double homeScreenInputFormHeight = 150;
 }
