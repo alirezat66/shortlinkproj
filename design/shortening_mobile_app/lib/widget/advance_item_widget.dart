@@ -22,7 +22,9 @@ class AdvanceItem extends StatelessWidget {
           width: MediaQuery.of(context).size.width -
               ConstantSize.extraLargePadding,
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(4)),
+              color: Colors.white,
+              borderRadius:
+                  BorderRadius.circular(ConstantSize.extraSmallRadius)),
           child: Column(
             children: [
               SizedBox(height: ConstantSize.circleIconContainerSize),
@@ -32,7 +34,10 @@ class AdvanceItem extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                    top: 16, right: 16, left: 16, bottom: 32),
+                    top: ConstantSize.smallPadding,
+                    right: ConstantSize.smallPadding,
+                    left: ConstantSize.smallPadding,
+                    bottom: ConstantSize.largePadding),
                 child: Text(note.description,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyText1.copyWith(

@@ -18,7 +18,7 @@ class CircleIconContainer extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius:
             BorderRadius.circular(ConstantSize.circleIconContainerSize / 2),
-        color: ConstantColors.veryDarkViolet,
+        color: Theme.of(context).primaryColorDark,
       ),
       child: SvgPicture.asset(
         iconAddress,

@@ -3,4 +3,5 @@ class ImageAddress {
   static const brandRecognitionIcon = 'images/icon-brand-recognition.svg';
   static const detailedRecordsIcon = 'images/icon-detailed-records.svg';
   static const fullyCustomizableIcon = 'images/icon-fully-customizable.svg';
+  static const backgroundShortenMobile = 'images/bg-shorten-mobile.svg';
 }
