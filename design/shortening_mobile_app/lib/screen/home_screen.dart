@@ -6,7 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shortening_mobile_app/constant/constant_colors.dart';
 import 'package:shortening_mobile_app/constant/constant_images.dart';
+import 'package:shortening_mobile_app/constant/constant_sizes.dart';
 import 'package:shortening_mobile_app/constant/constant_strings.dart';
+import 'package:shortening_mobile_app/widget/rounded_button_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -40,8 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         Matrix4.translationValues(size.width / 3, 0, 0.0),
                   ),
                   Padding(
-                    padding:
-                        const EdgeInsets.only(top: 32, left: 32, right: 32),
+                    padding: const EdgeInsets.only(
+                        top: ConstantSize.largePadding,
+                        left: ConstantSize.largePadding,
+                        right: ConstantSize.largePadding),
                     child: AutoSizeText(StringValue.homeTitle,
                         maxLines: 2,
                         textAlign: TextAlign.center,
@@ -49,8 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: ConstantColors.veryDarkViolet, height: 1.2)),
                   ),
                   Padding(
-                    padding:
-                        const EdgeInsets.only(top: 16, left: 16, right: 16),
+                    padding: const EdgeInsets.only(
+                        top: ConstantSize.smallPadding,
+                        left: ConstantSize.smallPadding,
+                        right: ConstantSize.smallPadding),
                     child: AutoSizeText(StringValue.homeDescription,
                         maxLines: 3,
                         textAlign: TextAlign.center,
@@ -58,22 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: ConstantColors.grayishViolet, height: 1.5)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 32),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text(StringValue.startButton,
-                          style: Theme.of(context)
-                              .textTheme
-                              .button
-                              .copyWith(color: Colors.white)),
-                      style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          minimumSize: Size(size.width / 2, 50),
-                          primary: Theme.of(context).primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          )),
-                    ),
+                    padding:
+                        const EdgeInsets.only(top: ConstantSize.largePadding),
+                    child: RoundedButton(
+                        onPressed: _onClickStartButton, width: size.width / 2),
                   )
                 ],
               ),
@@ -105,5 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: SvgPicture.asset('images/logo.svg'),
         ));
+  }
+
+  void _onClickStartButton() {
+    //todo on click on start button
   }
 }
