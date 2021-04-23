@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Shortly',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: HSLColor.fromAHSL(1, 180, 0.66, 0.49).toColor(), // cyan
         backgroundColor: HSLColor.fromAHSL(1, 0, 0, 0.75).toColor(), //gray
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
           headline2: GoogleFonts.poppins(
               fontSize: 61, fontWeight: FontWeight.w500, letterSpacing: -0.5),
           headline3:
-              GoogleFonts.poppins(fontSize: 46, fontWeight: FontWeight.w400),
+              GoogleFonts.poppins(fontSize: 48, fontWeight: FontWeight.w700),
           headline4: GoogleFonts.poppins(
               fontSize: 35, fontWeight: FontWeight.w500, letterSpacing: 0.25),
           headline5:
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
           bodyText2: GoogleFonts.poppins(
               fontSize: 15, fontWeight: FontWeight.w500, letterSpacing: 0.25),
           button: GoogleFonts.poppins(
-              fontSize: 15, fontWeight: FontWeight.w500, letterSpacing: 1.25),
+              fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 1.0),
           caption: GoogleFonts.poppins(
               fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.4),
           overline: GoogleFonts.poppins(
