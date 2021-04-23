@@ -3,6 +3,7 @@ class StringValue {
   static const String homeDescription =
       'Build your brand\'s recognition and get detailed insights on how your links are performing';
   static const String startButton = 'Get Start';
+  static const String shortenButton = 'Shorten It!';
   static const String advancedTitle = 'Advanced Statistics';
   static const String advancedDescription =
       'Track how your links are performing \n across the web with out our advanced \n statistics dashboard.';

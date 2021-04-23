@@ -4,6 +4,7 @@ class ConstantSize {
   static const double largePadding = 32;
   static const double normalPadding = 24;
   static const double smallPadding = 16;
+  static const double largeRadius = 30;
   static const double extraSmallPadding = 8;
   static const double extraSmallRadius = 4;
   static const double smallRadius = 8;
