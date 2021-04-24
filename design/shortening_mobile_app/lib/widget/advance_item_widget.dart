@@ -27,23 +27,25 @@ class AdvanceItem extends StatelessWidget {
                   BorderRadius.circular(ConstantSize.extraSmallRadius)),
           child: Column(
             children: [
-              SizedBox(height: ConstantSize.circleIconContainerSize),
+              SizedBox(height: 75),
               Text(
                 note.title,
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.headline5,
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                    top: ConstantSize.smallPadding,
-                    right: ConstantSize.smallPadding,
-                    left: ConstantSize.smallPadding,
-                    bottom: ConstantSize.largePadding),
+                    top: ConstantSize.smallPadding - 2,
+                    right: ConstantSize.largePadding +
+                        ConstantSize.extraSmallPadding,
+                    left: ConstantSize.largePadding +
+                        ConstantSize.extraSmallPadding,
+                    bottom: ConstantSize.semiLargePadding),
                 child: Text(note.description,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyText1.copyWith(
-                        color: ConstantColors.grayishViolet,
-                        fontSize: 14,
-                        height: 1.5)),
+                    style: Theme.of(context).textTheme.headline6.copyWith(
+                          height: 1.7,
+                          letterSpacing: -0.15,
+                        )),
               )
             ],
           ),

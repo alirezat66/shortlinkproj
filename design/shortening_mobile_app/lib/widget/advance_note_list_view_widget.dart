@@ -24,7 +24,7 @@ class AdvanceNoteListView extends StatelessWidget {
               children: [
                 AdvanceItem(note: list[index]),
                 Container(
-                  width: ConstantSize.extraSmallPadding,
+                  width: ConstantSize.semiSmallPadding,
                   height: ConstantSize.extraLargePadding,
                   color: Theme.of(context).primaryColor,
                 ),

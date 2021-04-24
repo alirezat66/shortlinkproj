@@ -1,18 +1,20 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shortening_mobile_app/constant/constant_colors.dart';
 import 'package:shortening_mobile_app/constant/constant_images.dart';
 import 'package:shortening_mobile_app/constant/constant_sizes.dart';
 import 'package:shortening_mobile_app/constant/constant_strings.dart';
 import 'package:shortening_mobile_app/data/model/advance_note.dart';
 import 'package:shortening_mobile_app/data/model/footer_menu.dart';
-import 'package:shortening_mobile_app/widget/advance_item_widget.dart';
 import 'package:shortening_mobile_app/widget/advance_note_list_view_widget.dart';
+import 'package:shortening_mobile_app/widget/footer_subtitle_widget.dart';
+import 'package:shortening_mobile_app/widget/footer_title_widget.dart';
 import 'package:shortening_mobile_app/widget/rounded_button_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,16 +43,20 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Column(
                   children: [
-                    buildFirstPage(size, context),
-                    buildSecondPage(size, context, advanceNoteList),
+                    buildHomePage(size, context),
+                    buildAdvancedPage(size, context, advanceNoteList),
                   ],
                 ),
                 Positioned(
-                  top: size.height -
-                      kToolbarHeight -
-                      ConstantSize.homeScreenInputFormHeight / 2.5,
-                  child: buildInputLinkPart(
-                      size, context, _shortLinkTextController),
+                  top: size.height +
+                      kToolbarHeight / 2 -
+                      ConstantSize.homeScreenInputFormHeight / 2,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: ConstantSize.extraSmallPadding),
+                    child: buildInputLinkPart(
+                        size, context, _shortLinkTextController),
+                  ),
                 ),
               ],
             ),
@@ -69,39 +75,44 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             SizedBox(
-              height: ConstantSize.largePadding,
+              height: ConstantSize.extraLargePadding + 6,
             ),
             SvgPicture.asset(
               ImageAddress.logoImage,
               color: Colors.white,
             ),
             SizedBox(
-              height: ConstantSize.largePadding,
+              height: ConstantSize.extraLargePadding - 4,
             ),
             FooterList(menu: menu),
-            Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                      icon: FaIcon(FontAwesomeIcons.facebookSquare,
-                          color: Colors.white),
-                      onPressed: () {}),
-                  IconButton(
-                      icon:
-                          FaIcon(FontAwesomeIcons.twitter, color: Colors.white),
-                      onPressed: () {}),
-                  IconButton(
-                      icon: FaIcon(FontAwesomeIcons.pinterest,
-                          color: Colors.white),
-                      onPressed: () {}),
-                  IconButton(
-                      icon: FaIcon(FontAwesomeIcons.instagram,
-                          color: Colors.white),
-                      onPressed: () {}),
-                ]),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              GestureDetector(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConstantSize.extraSmallPadding * 3),
+                child: SvgPicture.asset(ImageAddress.faceBookIcon),
+              )),
+              GestureDetector(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConstantSize.extraSmallPadding * 3),
+                child: SvgPicture.asset(ImageAddress.twitterIcon),
+              )),
+              GestureDetector(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConstantSize.extraSmallPadding * 3),
+                child: SvgPicture.asset(ImageAddress.pinterestIcon),
+              )),
+              GestureDetector(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConstantSize.extraSmallPadding * 3),
+                child: SvgPicture.asset(ImageAddress.instagramIcon),
+              )),
+            ]),
             SizedBox(
-              height: ConstantSize.extraLargePadding,
+              height: ConstantSize.smallPadding,
             ),
           ],
         ));
@@ -110,29 +121,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Container buildBoostPart(Size size, BuildContext context) {
     return Container(
       width: size.width,
-      height: 300,
+      height: ConstantSize.boostPartHeight,
       color: Theme.of(context).primaryColorDark,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
           SvgPicture.asset(ImageAddress.backgroundBoostMobile),
           Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: ConstantSize.largePadding,
-                      right: ConstantSize.largePadding),
-                  child: AutoSizeText('Boosts your links today',
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline4
-                          .copyWith(color: Colors.white, height: 1.5)),
-                ),
-                SizedBox(height: ConstantSize.normalPadding),
+                Text(StringValue.boostTitle,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headline4.copyWith(
+                        color: Colors.white, fontSize: 28, height: 1.5)),
+                SizedBox(height: ConstantSize.smallPadding),
                 buildStartButton(size),
               ]),
             ],
@@ -142,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Container buildSecondPage(
+  Container buildAdvancedPage(
       Size size, BuildContext context, List<AdvanceNote> advanceNoteList) {
     return Container(
       color: ConstantColors.grayBackground,
@@ -155,78 +159,87 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.only(
                 top: ConstantSize.largePadding * 3,
-                left: ConstantSize.largePadding,
-                right: ConstantSize.largePadding),
-            child: AutoSizeText(StringValue.advancedTitle,
-                maxLines: 1,
+                left: ConstantSize.normalPadding * 2 - 1,
+                right: ConstantSize.normalPadding * 2 - 1),
+            child: Text(StringValue.advancedTitle,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headline4.copyWith(
-                    color: ConstantColors.veryDarkViolet, height: 1.2)),
+                    color: ConstantColors.veryDarkViolet,
+                    fontSize: 28,
+                    height: 1.2)),
           ),
           Padding(
             padding: const EdgeInsets.only(
                 top: ConstantSize.smallPadding,
-                left: ConstantSize.largePadding,
-                right: ConstantSize.largePadding),
-            child: AutoSizeText(StringValue.advancedDescription,
-                maxLines: 3,
+                left: ConstantSize.semiLargePadding,
+                right: ConstantSize.semiLargePadding),
+            child: Text(StringValue.advancedDescription,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText1.copyWith(
-                    color: ConstantColors.grayishViolet, height: 1.5)),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    .copyWith(letterSpacing: 0.5, height: 1.9)),
           ),
           SizedBox(
             height: ConstantSize.extraLargePadding,
           ),
           AdvanceNoteListView(list: advanceNoteList),
           SizedBox(
-            height: size.height / 10,
+            height: ConstantSize.extraLargePadding - 2,
           ),
         ],
       ),
     );
   }
 
-  Container buildFirstPage(Size size, BuildContext context) {
+  Container buildHomePage(Size size, BuildContext context) {
     return Container(
-      height: size.height - kToolbarHeight,
+      height: size.height + kToolbarHeight / 2,
       color: Colors.white,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Container(
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
             child: SvgPicture.asset(
               ImageAddress.headerImage,
-              fit: BoxFit.fitHeight,
-              height: size.height / 3,
               alignment: Alignment.topRight,
             ),
-            transform: Matrix4.translationValues(size.width / 3, 0, 0.0),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-                top: ConstantSize.largePadding,
-                left: ConstantSize.largePadding,
-                right: ConstantSize.largePadding),
-            child: AutoSizeText(StringValue.homeTitle,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline3.copyWith(
-                    color: ConstantColors.veryDarkViolet, height: 1.2)),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                top: ConstantSize.smallPadding,
-                left: ConstantSize.smallPadding,
-                right: ConstantSize.smallPadding),
-            child: AutoSizeText(StringValue.homeDescription,
-                maxLines: 3,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText1.copyWith(
-                    color: ConstantColors.grayishViolet, height: 1.5)),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: ConstantSize.largePadding),
-            child: buildStartButton(size),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: ConstantSize.semiLargePadding,
+                    left: ConstantSize.largePadding +
+                        ConstantSize.normalPadding / 4,
+                    right: ConstantSize.largePadding +
+                        ConstantSize.normalPadding / 4),
+                child: AutoSizeText(StringValue.homeTitle,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    maxFontSize: 48,
+                    style: Theme.of(context).textTheme.headline3),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: ConstantSize.extraSmallPadding * 3,
+                    left: ConstantSize.largePadding,
+                    right: ConstantSize.largePadding),
+                child: AutoSizeText(StringValue.homeDescription,
+                    maxLines: 3,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyText1.copyWith(
+                        color: ConstantColors.grayishViolet,
+                        letterSpacing: -0.5,
+                        height: 1.6)),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: ConstantSize.largePadding),
+                child: buildStartButton(size),
+              ),
+            ],
           ),
         ],
       ),
@@ -238,7 +251,10 @@ class _HomeScreenState extends State<HomeScreen> {
       text: StringValue.startButton,
       onPressed: _onClickStartButton,
       radius: ConstantSize.largeRadius,
-      width: size.width / 2,
+      height: ConstantSize.roundedButtonHeight,
+      width: size.width -
+          ConstantSize.semiLargePadding * 4 -
+          ConstantSize.semiSmallPadding,
     );
   }
 
@@ -267,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
               key: _shortenLinkKey,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: ConstantSize.largePadding),
+                    vertical: ConstantSize.normalPadding),
                 child: Column(children: [
                   Container(
                     width: size.width - ConstantSize.extraLargePadding * 2,
@@ -276,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onChanged: _onChangedLinkText,
                       validator: (value) {
                         if (value.isEmpty) {
-                          return 'please add a link';
+                          return StringValue.emptyError;
                         }
                         return null;
                       },
@@ -288,10 +304,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               ConstantSize.smallPadding,
                               ConstantSize.extraSmallPadding),
                           filled: true,
-                          hintText: 'Shorten a link here',
+                          hintText: StringValue.shortenLinkTextHint,
                           hintStyle:
                               Theme.of(context).textTheme.bodyText2.copyWith(
-                                    fontSize: 14,
+                                    fontSize: 15,
                                     color: ConstantColors.grayishViolet,
                                   ),
                           errorStyle:
@@ -299,6 +315,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     fontSize: 14,
                                     color: Theme.of(context).errorColor,
                                   ),
+                          enabledBorder: new OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                  ConstantSize.smallRadius),
+                              borderSide: new BorderSide(
+                                color: Colors.white,
+                              )),
                           border: new OutlineInputBorder(
                               borderRadius: BorderRadius.circular(
                                   ConstantSize.smallRadius),
@@ -308,11 +330,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: ConstantSize.normalPadding,
+                    height: ConstantSize.smallPadding,
                   ),
                   RoundedButton(
                       text: StringValue.shortenButton,
                       onPressed: _shortenLink,
+                      fontSize: 18,
+                      height: ConstantSize.buttonHeight,
                       width: size.width - ConstantSize.extraLargePadding * 2,
                       radius: ConstantSize.smallRadius)
                 ]),
@@ -328,24 +352,30 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: false,
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(
+                horizontal:
+                    ConstantSize.largePadding - ConstantSize.semiSmallPadding),
             child: Center(
-              child: FaIcon(
-                FontAwesomeIcons.bars,
+              child: SvgPicture.asset(
+                ImageAddress.menuImage,
                 color: ConstantColors.grayishViolet,
-                size: 22,
+                width: ConstantSize.menuIconSize,
+                height: ConstantSize.menuIconSize,
               ),
             ),
           ),
         ],
         title: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding:
+                  const EdgeInsets.only(left: ConstantSize.semiSmallPadding),
               child: SvgPicture.asset(ImageAddress.logoImage),
-            ),
+            )
           ],
         ));
   }
@@ -380,62 +410,24 @@ class FooterList extends StatelessWidget {
         physics: NeverScrollableScrollPhysics(),
         itemCount: menu.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: FooterTitleText(
-              text: menu[index].title,
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom:
+                    index != menu.length - 1 ? ConstantSize.largePadding : 0),
+            child: ListTile(
+              title: FooterTitle(
+                text: menu[index].title,
+              ),
+              subtitle: ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: menu[index].subStrings.length,
+                  itemBuilder: (context, subIndex) {
+                    return FooterSubTitle(
+                        text: menu[index].subStrings[subIndex]);
+                  }),
             ),
-            subtitle: ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: menu[index].subStrings.length,
-                itemBuilder: (context, subIndex) {
-                  return FooterSubTitleText(
-                      text: menu[index].subStrings[subIndex]);
-                }),
           );
         });
-  }
-}
-
-class FooterSubTitleText extends StatelessWidget {
-  final String text;
-  const FooterSubTitleText({
-    Key key,
-    @required this.text,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: ConstantSize.extraSmallPadding),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.overline.copyWith(
-              color: ConstantColors.grayishViolet,
-            ),
-      ),
-    );
-  }
-}
-
-class FooterTitleText extends StatelessWidget {
-  final String text;
-  const FooterTitleText({
-    Key key,
-    @required this.text,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: ConstantSize.smallPadding),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style:
-            Theme.of(context).textTheme.caption.copyWith(color: Colors.white),
-      ),
-    );
   }
 }
