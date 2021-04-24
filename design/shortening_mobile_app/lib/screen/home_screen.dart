@@ -157,8 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             height: size.height / 10,
           ),
-          Padding(]
-
+          Padding(
             padding: const EdgeInsets.only(
                 top: ConstantSize.largePadding * 3,
                 left: ConstantSize.normalPadding * 2 - 1,
