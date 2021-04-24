@@ -1,5 +1,6 @@
 class ConstantSize {
   static const double buttonHeight = 48;
+  static const double copyButtonHeight = 40;
   static const double roundedButtonHeight = 56;
   static const double menuIconSize = 26;
   static const double extraSmallPadding = 4;

@@ -8,12 +8,14 @@ class RoundedButton extends StatelessWidget {
   final String text;
   final double height;
   final double fontSize;
+  final Color color;
   const RoundedButton(
       {Key key,
       @required this.onPressed,
       @required this.width,
       @required this.height,
       @required this.radius,
+      this.color,
       this.fontSize,
       @required this.text})
       : super(key: key);
@@ -21,6 +23,7 @@ class RoundedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double defaultSize = fontSize ?? 20;
+    Color buttonColor = color ?? Theme.of(context).primaryColor;
     return ElevatedButton(
       onPressed: onPressed,
       child: Text(text,
@@ -31,7 +34,7 @@ class RoundedButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
           elevation: 0,
           minimumSize: Size(width, height),
-          primary: Theme.of(context).primaryColor,
+          primary: buttonColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radius),
           )),

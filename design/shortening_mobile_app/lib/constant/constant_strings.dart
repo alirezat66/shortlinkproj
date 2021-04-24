@@ -37,4 +37,6 @@ class StringValue {
   ];
 
   static const String emptyError = 'please add a link';
+  static const String copyButtonText = 'Copy';
+  static const String copiedButtonText = 'Copied!';
 }
