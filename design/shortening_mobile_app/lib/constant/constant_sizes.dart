@@ -13,10 +13,10 @@ class ConstantSize {
   static const double semiLargePadding = 42;
   static const double extraLargePadding = 48;
 
-  static const double largeRadius = 30;
-
   static const double extraSmallRadius = 4;
   static const double smallRadius = 8;
+  static const double largeRadius = 30;
+
   static const double circleIconContainerSize = 90;
   static const double homeScreenInputFormHeight = 160;
 }

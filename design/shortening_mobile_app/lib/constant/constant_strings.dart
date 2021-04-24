@@ -40,5 +40,6 @@ class StringValue {
   static const String internetError = 'No internet connection';
   static const String copyButtonText = 'Copy';
   static const String copiedButtonText = 'Copied!';
+  static const String loadingText = 'Connecting To Server ...';
   static const String urlCloud = 'https://api.shrtco.de/v2/';
 }

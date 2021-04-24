@@ -1,28 +1,28 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shortening_mobile_app/data/model/shorten_link.dart';
+import 'package:shortening_mobile_app/data/model/short_code_link.dart';
 
 void main() {
   group('test shorten_link', () {
     test('check fromJson method value', () {
       Map<String, dynamic> resultMap = jsonDecode(
           '{"code": "KCveN","short_link": "shrtco.de/KCveN","full_short_link": "https://shrtco.de/KCveN","short_link2": "9qr.de/KCveN","full_short_link2": "https://9qr.de/KCveN","share_link": "shrtco.de/share/KCveN","full_share_link": "https://shrtco.de/share/KCveN","original_link": "http://example.org/very/long/link.html"}');
-      ShortenLink link = ShortenLink.fromJson(resultMap);
+      ShortCodeLink link = ShortCodeLink.fromJson(resultMap);
       expect(link.code, 'KCveN');
     });
     test('check empty json', () {
       Map<String, dynamic> resultMap = jsonDecode('{}');
-      ShortenLink link = ShortenLink.fromJson(resultMap);
+      ShortCodeLink link = ShortCodeLink.fromJson(resultMap);
       expect(link.code, null);
     });
     test('check setAsCopiedByIndex method ', () {
       Map<String, dynamic> resultMap = jsonDecode(
           '{"code": "KCveN","short_link": "shrtco.de/KCveN","full_short_link": "https://shrtco.de/KCveN","short_link2": "9qr.de/KCveN","full_short_link2": "https://9qr.de/KCveN","share_link": "shrtco.de/share/KCveN","full_share_link": "https://shrtco.de/share/KCveN","original_link": "http://example.org/very/long/link.html"}');
-      ShortenLink link = ShortenLink.fromJson(resultMap);
-      ShortenLink link2 = ShortenLink.fromJson(resultMap);
-      ShortenLink link3 = ShortenLink.fromJson(resultMap);
-      ShortenLinkList list = ShortenLinkList();
+      ShortCodeLink link = ShortCodeLink.fromJson(resultMap);
+      ShortCodeLink link2 = ShortCodeLink.fromJson(resultMap);
+      ShortCodeLink link3 = ShortCodeLink.fromJson(resultMap);
+      ShortCodeLinkList list = ShortCodeLinkList();
       list.links.add(link);
       list.links.add(link2);
       list.links.add(link3);

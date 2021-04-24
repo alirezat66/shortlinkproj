@@ -1,4 +1,4 @@
-class ShortenLink {
+class ShortCodeLink {
   String code;
   String originalLink;
   String shortLink;
@@ -9,7 +9,7 @@ class ShortenLink {
   String fullShareLink;
   bool isCopied;
 
-  ShortenLink(
+  ShortCodeLink(
       {this.code,
       this.originalLink,
       this.shortLink,
@@ -20,8 +20,8 @@ class ShortenLink {
       this.fullShareLink,
       this.isCopied});
 
-  factory ShortenLink.fromJson(Map<String, dynamic> parsedJson) {
-    return ShortenLink(
+  factory ShortCodeLink.fromJson(Map<String, dynamic> parsedJson) {
+    return ShortCodeLink(
       code: parsedJson['code'],
       originalLink: parsedJson['original_link'],
       shortLink: parsedJson['short_link'],
@@ -35,8 +35,8 @@ class ShortenLink {
   }
 }
 
-class ShortenLinkList {
-  List<ShortenLink> links = [];
+class ShortCodeLinkList {
+  List<ShortCodeLink> links = [];
   void setAsCopiedByIndex(int index) {
     if (index <= links.length) {
       for (int i = 0; i < links.length; i++) {

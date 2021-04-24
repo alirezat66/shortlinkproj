@@ -6,16 +6,20 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shortening_mobile_app/bloc/shortcode/short_code_cubit.dart';
 import 'package:shortening_mobile_app/constant/constant_colors.dart';
 import 'package:shortening_mobile_app/constant/constant_images.dart';
 import 'package:shortening_mobile_app/constant/constant_sizes.dart';
 import 'package:shortening_mobile_app/constant/constant_strings.dart';
 import 'package:shortening_mobile_app/data/model/advance_note.dart';
 import 'package:shortening_mobile_app/data/model/footer_menu.dart';
+import 'package:shortening_mobile_app/data/model/short_code_link.dart';
 import 'package:shortening_mobile_app/widget/advance_note_list_view_widget.dart';
-import 'package:shortening_mobile_app/widget/footer_subtitle_widget.dart';
-import 'package:shortening_mobile_app/widget/footer_title_widget.dart';
+import 'package:shortening_mobile_app/widget/footer_list_widget.dart';
+import 'package:shortening_mobile_app/widget/link_item_widget.dart';
+import 'package:shortening_mobile_app/widget/loading_dialog.dart';
 import 'package:shortening_mobile_app/widget/rounded_button_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -24,46 +28,71 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _shortenLinkKey = GlobalKey<FormState>();
+  ShortCodeCubit _shortCodeCubit;
+  final _shortLinkTextController = TextEditingController();
+  BuildContext dialogContext;
+  ShortCodeLinkList _shortCodeList = ShortCodeLinkList();
+  @override
+  void initState() {
+    _shortCodeCubit = context.read<ShortCodeCubit>();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     List<AdvanceNote> advanceNoteList = AdvanceNoteList().list;
     List<FooterMenu> _footerList = StringValue.footerMenu;
 
-    final _shortLinkTextController = TextEditingController();
-
     SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       appBar: buildAppBar(),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                Column(
-                  children: [
-                    buildHomePage(size, context),
-                    buildAdvancedPage(size, context, advanceNoteList),
-                  ],
-                ),
-                Positioned(
-                  top: size.height +
-                      kToolbarHeight / 2 -
-                      ConstantSize.homeScreenInputFormHeight / 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        top: ConstantSize.extraSmallPadding),
-                    child: buildInputLinkPart(
-                        size, context, _shortLinkTextController),
+      body: BlocListener<ShortCodeCubit, ShortCodeState>(
+        listener: (context, state) {
+          if (state is ShortCodeLoading) {
+            _showWaitingDialog();
+          } else {
+            if (state is ShortCodeError) {
+              //todo show error
+              _disMissDialog();
+            } else if (state is ShortCodeUrlDone) {
+              setState(() {
+                _shortCodeList.links.add(state.link);
+                _shortLinkTextController.text = '';
+              });
+              _disMissDialog();
+            }
+          }
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  Column(
+                    children: [
+                      buildHomePage(size, context),
+                      buildAdvancedPage(size, context, advanceNoteList),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            buildBoostPart(size, context),
-            buildFooterPart(size, _footerList)
-          ],
+                  Positioned(
+                    top: size.height +
+                        kToolbarHeight / 2 -
+                        ConstantSize.homeScreenInputFormHeight / 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: ConstantSize.extraSmallPadding),
+                      child: buildInputLinkPart(size, context),
+                    ),
+                  ),
+                ],
+              ),
+              buildBoostPart(size, context),
+              buildFooterPart(size, _footerList)
+            ],
+          ),
         ),
       ),
     );
@@ -157,9 +186,22 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             height: size.height / 10,
           ),
+          ListView.builder(
+            itemCount: _shortCodeList.links.length,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return LinkItem(
+                item: _shortCodeList.links[index],
+                onPressed: () {},
+              );
+            },
+          ),
           Padding(
-            padding: const EdgeInsets.only(
-                top: ConstantSize.largePadding * 3,
+            padding: EdgeInsets.only(
+                top: _shortCodeList.links.length == 0
+                    ? ConstantSize.largePadding * 3
+                    : ConstantSize.largePadding * 2,
                 left: ConstantSize.normalPadding * 2 - 1,
                 right: ConstantSize.normalPadding * 2 - 1),
             child: Text(StringValue.advancedTitle,
@@ -259,8 +301,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  ConstrainedBox buildInputLinkPart(Size size, BuildContext context,
-      TextEditingController _shortLinkTextController) {
+  ConstrainedBox buildInputLinkPart(
+    Size size,
+    BuildContext context,
+  ) {
     return ConstrainedBox(
       constraints: BoxConstraints(
         minWidth: size.width - ConstantSize.extraLargePadding,
@@ -389,46 +433,26 @@ class _HomeScreenState extends State<HomeScreen> {
     final isValid = _shortenLinkKey.currentState.validate();
     if (!isValid) {
       return;
+    } else {
+      _shortCodeCubit.shortALink(_shortLinkTextController.text);
     }
   }
 
   void _onChangedLinkText(String value) {
     if (value.isNotEmpty) _shortenLinkKey.currentState.validate();
   }
-}
 
-class FooterList extends StatelessWidget {
-  final List<FooterMenu> menu;
-  const FooterList({
-    Key key,
-    @required this.menu,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: menu.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: EdgeInsets.only(
-                bottom:
-                    index != menu.length - 1 ? ConstantSize.largePadding : 0),
-            child: ListTile(
-              title: FooterTitle(
-                text: menu[index].title,
-              ),
-              subtitle: ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: menu[index].subStrings.length,
-                  itemBuilder: (context, subIndex) {
-                    return FooterSubTitle(
-                        text: menu[index].subStrings[subIndex]);
-                  }),
-            ),
-          );
+  void _showWaitingDialog() {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          dialogContext = context;
+          return LoadingDialog();
         });
+  }
+
+  void _disMissDialog() {
+    Navigator.pop(dialogContext);
   }
 }

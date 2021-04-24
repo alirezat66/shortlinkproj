@@ -1,21 +1,21 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:shortening_mobile_app/constant/constant_strings.dart';
 import 'package:shortening_mobile_app/data/model/shorten_result.dart';
-import 'package:shortening_mobile_app/data/provider/shorten_provider.dart';
+import 'package:shortening_mobile_app/data/provider/short_code_provider.dart';
 
 abstract class BaseService {
-  Future<ShortenResult> shortLink(String url);
+  Future<ShortCodeResult> shortLink(String url);
 }
 
-class ShortenService implements BaseService {
-  BaseService service = ShortenProvider.createApi();
+class ShortCodeService implements BaseService {
+  BaseService service = ShortCodeProvider.createApi();
 
   @override
-  Future<ShortenResult> shortLink(String url) async {
+  Future<ShortCodeResult> shortLink(String url) async {
     if (await _checkConnection()) {
       return service.shortLink(url);
     } else {
-      return ShortenResult(isOk: false, error: StringValue.internetError);
+      return ShortCodeResult(isOk: false, error: StringValue.internetError);
     }
   }
 

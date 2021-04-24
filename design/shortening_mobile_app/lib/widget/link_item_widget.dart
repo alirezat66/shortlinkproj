@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shortening_mobile_app/constant/constant_colors.dart';
 import 'package:shortening_mobile_app/constant/constant_sizes.dart';
 import 'package:shortening_mobile_app/constant/constant_strings.dart';
-import 'package:shortening_mobile_app/data/model/shorten_link.dart';
+import 'package:shortening_mobile_app/data/model/short_code_link.dart';
 import 'package:shortening_mobile_app/widget/rounded_button_widget.dart';
 
 class LinkItem extends StatelessWidget {
-  final ShortenLink item;
+  final ShortCodeLink item;
   final Function onPressed;
   const LinkItem({
     Key key,
