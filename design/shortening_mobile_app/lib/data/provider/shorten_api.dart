@@ -4,14 +4,13 @@ import 'package:http/http.dart' as http;
 
 class ShortenApi {
   String url;
-
   ShortenApi(this.url);
 
   Future<dynamic> getAsync(String endPoint) async {
     var url = this._getFinalURL(endPoint);
     print(url);
 
-    final response = await http.get(url, headers: {
+    final response = await http.get(Uri.parse(url), headers: {
       "Content-type": "application/json",
     });
     print(response.body.toString());
@@ -19,11 +18,10 @@ class ShortenApi {
   }
 
   _getFinalURL(String endpoint) {
-    var url;
     if (endpoint.startsWith('/')) {
-      url = this.url + "/shorten" + endpoint;
+      return this.url + "/shorten" + endpoint;
     } else {
-      return url + "/shorten?" + endpoint;
+      return this.url + '/shorten?' + endpoint;
     }
   }
 }

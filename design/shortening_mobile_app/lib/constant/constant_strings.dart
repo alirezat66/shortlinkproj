@@ -37,6 +37,8 @@ class StringValue {
   ];
 
   static const String emptyError = 'please add a link';
+  static const String internetError = 'No internet connection';
   static const String copyButtonText = 'Copy';
   static const String copiedButtonText = 'Copied!';
+  static const String urlCloud = 'https://api.shrtco.de/v2/';
 }

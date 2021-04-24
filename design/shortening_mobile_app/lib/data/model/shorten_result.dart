@@ -11,6 +11,7 @@ class ShortenResult {
   ShortenResult({@required this.isOk, this.result, this.error, this.errorCode});
 
   factory ShortenResult.fromJson(Map<String, dynamic> parsedJson) {
+    print(parsedJson.toString());
     if (parsedJson['ok']) {
       return ShortenResult(
         isOk: true,
