@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:shortening_mobile_app/constant/constant_colors.dart';
 import 'package:shortening_mobile_app/constant/constant_sizes.dart';
 
 class CircleIconContainer extends StatelessWidget {

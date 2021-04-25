@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shortening_mobile_app/constant/constant_colors.dart';
 import 'package:shortening_mobile_app/constant/constant_sizes.dart';
 import 'package:shortening_mobile_app/data/model/advance_note.dart';
 

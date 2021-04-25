@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shortening_mobile_app/constant/constant_sizes.dart';
 
 class RoundedButton extends StatelessWidget {
   final Function onPressed;

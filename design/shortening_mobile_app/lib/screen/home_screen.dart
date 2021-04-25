@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -11,15 +12,14 @@ import 'package:shortening_mobile_app/constant/constant_colors.dart';
 import 'package:shortening_mobile_app/constant/constant_images.dart';
 import 'package:shortening_mobile_app/constant/constant_sizes.dart';
 import 'package:shortening_mobile_app/constant/constant_strings.dart';
-import 'package:shortening_mobile_app/data/model/advance_note.dart';
-import 'package:shortening_mobile_app/data/model/footer_menu.dart';
 import 'package:shortening_mobile_app/data/model/short_code_link.dart';
+import 'package:shortening_mobile_app/helper/utility.dart';
 import 'package:shortening_mobile_app/widget/advance_note_list_view_widget.dart';
 import 'package:shortening_mobile_app/widget/footer_list_widget.dart';
-import 'package:shortening_mobile_app/widget/link_item_widget.dart';
 import 'package:shortening_mobile_app/widget/loading_dialog.dart';
 import 'package:shortening_mobile_app/widget/rounded_button_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shortening_mobile_app/widget/short_link_listview_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -28,10 +28,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _shortenLinkKey = GlobalKey<FormState>();
+  ScrollController _scrollController = ScrollController();
+
   ShortCodeCubit _shortCodeCubit;
   final _shortLinkTextController = TextEditingController();
   BuildContext dialogContext;
   ShortCodeLinkList _shortCodeList = ShortCodeLinkList();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Size size;
   @override
   void initState() {
     _shortCodeCubit = context.read<ShortCodeCubit>();
@@ -40,13 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    List<AdvanceNote> advanceNoteList = AdvanceNoteList().list;
-    List<FooterMenu> _footerList = StringValue.footerMenu;
+    size = MediaQuery.of(context).size;
 
     SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       appBar: buildAppBar(),
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: BlocListener<ShortCodeCubit, ShortCodeState>(
         listener: (context, state) {
@@ -54,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
             _showWaitingDialog();
           } else {
             if (state is ShortCodeError) {
-              //todo show error
               _disMissDialog();
+              Utility.showErrorWithKey(state.error, _scaffoldKey, context);
             } else if (state is ShortCodeUrlDone) {
               setState(() {
                 _shortCodeList.links.add(state.link);
@@ -65,177 +68,77 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           }
         },
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Column(
-                    children: [
-                      buildHomePage(size, context),
-                      buildAdvancedPage(size, context, advanceNoteList),
-                    ],
-                  ),
-                  Positioned(
-                    top: size.height +
-                        kToolbarHeight / 2 -
-                        ConstantSize.homeScreenInputFormHeight / 2,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: ConstantSize.extraSmallPadding),
-                      child: buildInputLinkPart(size, context),
-                    ),
-                  ),
-                ],
-              ),
-              buildBoostPart(size, context),
-              buildFooterPart(size, _footerList)
-            ],
-          ),
-        ),
+        child: buildBody(context),
       ),
     );
   }
 
-  Container buildFooterPart(Size size, List<FooterMenu> menu) {
-    return Container(
-        width: size.width,
-        color: ConstantColors.veryDarkViolet,
-        child: Column(
+  SingleChildScrollView buildBody(BuildContext context) {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Column(
+                children: [
+                  buildHomePage(context),
+                  buildAdvancedPage(context),
+                ],
+              ),
+              Positioned(
+                top: size.height +
+                    kToolbarHeight / 2 -
+                    ConstantSize.homeScreenInputFormHeight / 2,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: ConstantSize.extraSmallPadding),
+                  child: buildInputLinkPart(context),
+                ),
+              ),
+            ],
+          ),
+          buildBoostPage(context),
+          buildFooterPage()
+        ],
+      ),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal:
+                    ConstantSize.largePadding - ConstantSize.semiSmallPadding),
+            child: Center(
+              child: SvgPicture.asset(
+                ImageAddress.menuImage,
+                color: ConstantColors.grayishViolet,
+                width: ConstantSize.menuIconSize,
+                height: ConstantSize.menuIconSize,
+              ),
+            ),
+          ),
+        ],
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: ConstantSize.extraLargePadding + 6,
-            ),
-            SvgPicture.asset(
-              ImageAddress.logoImage,
-              color: Colors.white,
-            ),
-            SizedBox(
-              height: ConstantSize.extraLargePadding - 4,
-            ),
-            FooterList(menu: menu),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              GestureDetector(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: ConstantSize.extraSmallPadding * 3),
-                child: SvgPicture.asset(ImageAddress.faceBookIcon),
-              )),
-              GestureDetector(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: ConstantSize.extraSmallPadding * 3),
-                child: SvgPicture.asset(ImageAddress.twitterIcon),
-              )),
-              GestureDetector(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: ConstantSize.extraSmallPadding * 3),
-                child: SvgPicture.asset(ImageAddress.pinterestIcon),
-              )),
-              GestureDetector(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: ConstantSize.extraSmallPadding * 3),
-                child: SvgPicture.asset(ImageAddress.instagramIcon),
-              )),
-            ]),
-            SizedBox(
-              height: ConstantSize.smallPadding,
-            ),
+            Padding(
+              padding:
+                  const EdgeInsets.only(left: ConstantSize.semiSmallPadding),
+              child: SvgPicture.asset(ImageAddress.logoImage),
+            )
           ],
         ));
   }
 
-  Container buildBoostPart(Size size, BuildContext context) {
-    return Container(
-      width: size.width,
-      height: ConstantSize.boostPartHeight,
-      color: Theme.of(context).primaryColorDark,
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          SvgPicture.asset(ImageAddress.backgroundBoostMobile),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(children: [
-                Text(StringValue.boostTitle,
-                    maxLines: 1,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline4.copyWith(
-                        color: Colors.white, fontSize: 28, height: 1.5)),
-                SizedBox(height: ConstantSize.smallPadding),
-                buildStartButton(size),
-              ]),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  Container buildAdvancedPage(
-      Size size, BuildContext context, List<AdvanceNote> advanceNoteList) {
-    return Container(
-      color: ConstantColors.grayBackground,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: size.height / 10,
-          ),
-          ListView.builder(
-            itemCount: _shortCodeList.links.length,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return LinkItem(
-                item: _shortCodeList.links[index],
-                onPressed: () {},
-              );
-            },
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: _shortCodeList.links.length == 0
-                    ? ConstantSize.largePadding * 3
-                    : ConstantSize.largePadding * 2,
-                left: ConstantSize.normalPadding * 2 - 1,
-                right: ConstantSize.normalPadding * 2 - 1),
-            child: Text(StringValue.advancedTitle,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline4.copyWith(
-                    color: ConstantColors.veryDarkViolet,
-                    fontSize: 28,
-                    height: 1.2)),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                top: ConstantSize.smallPadding,
-                left: ConstantSize.semiLargePadding,
-                right: ConstantSize.semiLargePadding),
-            child: Text(StringValue.advancedDescription,
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    .copyWith(letterSpacing: 0.5, height: 1.9)),
-          ),
-          SizedBox(
-            height: ConstantSize.extraLargePadding,
-          ),
-          AdvanceNoteListView(list: advanceNoteList),
-          SizedBox(
-            height: ConstantSize.extraLargePadding - 2,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Container buildHomePage(Size size, BuildContext context) {
+  Container buildHomePage(BuildContext context) {
     return Container(
       height: size.height + kToolbarHeight / 2,
       color: Colors.white,
@@ -280,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: ConstantSize.largePadding),
-                child: buildStartButton(size),
+                child: buildStartButton(),
               ),
             ],
           ),
@@ -289,22 +192,60 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  RoundedButton buildStartButton(Size size) {
-    return RoundedButton(
-      text: StringValue.startButton,
-      onPressed: _onClickStartButton,
-      radius: ConstantSize.largeRadius,
-      height: ConstantSize.roundedButtonHeight,
-      width: size.width -
-          ConstantSize.semiLargePadding * 4 -
-          ConstantSize.semiSmallPadding,
+  Container buildAdvancedPage(BuildContext context) {
+    return Container(
+      color: ConstantColors.grayBackground,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: size.height / 10,
+          ),
+          ShortLinkListView(
+            shortCodeList: _shortCodeList,
+            onClick: (index) {
+              _copyToClipBoard(index);
+            },
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+                top: _shortCodeList.links.length == 0
+                    ? ConstantSize.largePadding * 3
+                    : ConstantSize.largePadding * 2,
+                left: ConstantSize.normalPadding * 2 - 1,
+                right: ConstantSize.normalPadding * 2 - 1),
+            child: Text(StringValue.advancedTitle,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline4.copyWith(
+                    color: ConstantColors.veryDarkViolet,
+                    fontSize: 28,
+                    height: 1.2)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+                top: ConstantSize.smallPadding,
+                left: ConstantSize.semiLargePadding,
+                right: ConstantSize.semiLargePadding),
+            child: Text(StringValue.advancedDescription,
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    .copyWith(letterSpacing: 0.5, height: 1.9)),
+          ),
+          SizedBox(
+            height: ConstantSize.extraLargePadding,
+          ),
+          AdvanceNoteListView(),
+          SizedBox(
+            height: ConstantSize.extraLargePadding - 2,
+          ),
+        ],
+      ),
     );
   }
 
-  ConstrainedBox buildInputLinkPart(
-    Size size,
-    BuildContext context,
-  ) {
+  ConstrainedBox buildInputLinkPart(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
         minWidth: size.width - ConstantSize.extraLargePadding,
@@ -393,43 +334,102 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  AppBar buildAppBar() {
-    return AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal:
-                    ConstantSize.largePadding - ConstantSize.semiSmallPadding),
-            child: Center(
-              child: SvgPicture.asset(
-                ImageAddress.menuImage,
-                color: ConstantColors.grayishViolet,
-                width: ConstantSize.menuIconSize,
-                height: ConstantSize.menuIconSize,
-              ),
-            ),
-          ),
+  Container buildBoostPage(BuildContext context) {
+    return Container(
+      width: size.width,
+      height: ConstantSize.boostPartHeight,
+      color: Theme.of(context).primaryColorDark,
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          SvgPicture.asset(ImageAddress.backgroundBoostMobile),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(children: [
+                Text(StringValue.boostTitle,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headline4.copyWith(
+                        color: Colors.white, fontSize: 28, height: 1.5)),
+                SizedBox(height: ConstantSize.smallPadding),
+                buildStartButton(),
+              ]),
+            ],
+          )
         ],
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+    );
+  }
+
+  Container buildFooterPage() {
+    return Container(
+        width: size.width,
+        color: ConstantColors.veryDarkViolet,
+        child: Column(
           children: [
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: ConstantSize.semiSmallPadding),
-              child: SvgPicture.asset(ImageAddress.logoImage),
-            )
+            SizedBox(
+              height: ConstantSize.extraLargePadding + 6,
+            ),
+            SvgPicture.asset(
+              ImageAddress.logoImage,
+              color: Colors.white,
+            ),
+            SizedBox(
+              height: ConstantSize.extraLargePadding - 4,
+            ),
+            FooterList(),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              GestureDetector(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConstantSize.extraSmallPadding * 3),
+                child: SvgPicture.asset(ImageAddress.faceBookIcon),
+              )),
+              GestureDetector(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConstantSize.extraSmallPadding * 3),
+                child: SvgPicture.asset(ImageAddress.twitterIcon),
+              )),
+              GestureDetector(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConstantSize.extraSmallPadding * 3),
+                child: SvgPicture.asset(ImageAddress.pinterestIcon),
+              )),
+              GestureDetector(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConstantSize.extraSmallPadding * 3),
+                child: SvgPicture.asset(ImageAddress.instagramIcon),
+              )),
+            ]),
+            SizedBox(
+              height: ConstantSize.smallPadding,
+            ),
           ],
         ));
   }
 
-  void _onClickStartButton() {
-    //todo on click on start button
+  RoundedButton buildStartButton() {
+    return RoundedButton(
+      text: StringValue.startButton,
+      onPressed: _onClickStartButton,
+      radius: ConstantSize.largeRadius,
+      height: ConstantSize.roundedButtonHeight,
+      width: size.width -
+          ConstantSize.semiLargePadding * 4 -
+          ConstantSize.semiSmallPadding,
+    );
   }
 
-  _shortenLink() {
+  void _onClickStartButton() {
+    _scrollController.animateTo(size.height - 100,
+        duration: Duration(milliseconds: 800), curve: Curves.ease);
+  }
+
+  void _shortenLink() {
     final isValid = _shortenLinkKey.currentState.validate();
     if (!isValid) {
       return;
@@ -454,5 +454,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _disMissDialog() {
     Navigator.pop(dialogContext);
+  }
+
+  void _copyToClipBoard(int index) {
+    FlutterClipboard.copy(_shortCodeList.links[index].fullShortLink)
+        .then((value) {
+      setState(() {
+        _shortCodeList.setAsCopiedByIndex(index);
+      });
+      Utility.showMessageWithKey(
+          StringValue.copiedSuccessText, _scaffoldKey, context);
+    });
   }
 }

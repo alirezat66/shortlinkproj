@@ -7,13 +7,12 @@ import 'advance_item_widget.dart';
 class AdvanceNoteListView extends StatelessWidget {
   const AdvanceNoteListView({
     Key key,
-    @required this.list,
   }) : super(key: key);
-
-  final List<AdvanceNote> list;
 
   @override
   Widget build(BuildContext context) {
+    List<AdvanceNote> list = AdvanceNoteList().list;
+
     return ListView.builder(
         itemCount: list.length,
         shrinkWrap: true,
