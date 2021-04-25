@@ -29,7 +29,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _shortenLinkKey = GlobalKey<FormState>();
   ScrollController _scrollController = ScrollController();
-
+  OverlayEntry _menuOverlay;
   ShortCodeCubit _shortCodeCubit;
   final _shortLinkTextController = TextEditingController();
   BuildContext dialogContext;
@@ -112,16 +112,25 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         centerTitle: false,
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal:
-                    ConstantSize.largePadding - ConstantSize.semiSmallPadding),
-            child: Center(
-              child: SvgPicture.asset(
-                ImageAddress.menuImage,
-                color: ConstantColors.grayishViolet,
-                width: ConstantSize.menuIconSize,
-                height: ConstantSize.menuIconSize,
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                if (_menuOverlay != null) {
+                  _disMissMenu();
+                } else {
+                  _showMenu(context);
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConstantSize.largePadding -
+                        ConstantSize.semiSmallPadding),
+                child: SvgPicture.asset(
+                  ImageAddress.menuImage,
+                  color: ConstantColors.grayishViolet,
+                  width: ConstantSize.menuIconSize,
+                  height: ConstantSize.menuIconSize,
+                ),
               ),
             ),
           ),
@@ -157,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(
-                    top: ConstantSize.semiLargePadding,
+                    top: ConstantSize.semiLargePadding - 2,
                     left: ConstantSize.largePadding +
                         ConstantSize.normalPadding / 4,
                     right: ConstantSize.largePadding +
@@ -465,5 +474,124 @@ class _HomeScreenState extends State<HomeScreen> {
       Utility.showMessageWithKey(
           StringValue.copiedSuccessText, _scaffoldKey, context);
     });
+  }
+
+  void _showMenu(BuildContext context) async {
+    OverlayState overlayState = Overlay.of(context);
+    _menuOverlay = OverlayEntry(builder: (context) {
+      return Positioned(
+        top: kToolbarHeight +
+            ConstantSize.extraLargePadding +
+            ConstantSize.semiSmallPadding,
+        right: ConstantSize.normalPadding,
+        left: ConstantSize.normalPadding,
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ConstantSize.smallRadius),
+            color: Theme.of(context).primaryColorDark,
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 28),
+                child: TextButton(
+                  onPressed: () {
+                    _disMissMenu();
+                  },
+                  child: Text(
+                    'Features',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline5
+                        .copyWith(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: ConstantSize.semiSmallPadding + 2),
+                child: TextButton(
+                  onPressed: () {
+                    _disMissMenu();
+                  },
+                  child: Text(
+                    'Pricing',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline5
+                        .copyWith(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: ConstantSize.semiSmallPadding - 2),
+                child: TextButton(
+                  onPressed: () {
+                    _disMissMenu();
+                  },
+                  child: Text(
+                    'Resources',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline5
+                        .copyWith(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: ConstantSize.semiNormalPadding,
+                    right: ConstantSize.largePadding,
+                    left: ConstantSize.largePadding),
+                child: Divider(
+                  height: 1,
+                  color: ConstantColors.grayBackground.withOpacity(0.4),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: ConstantSize.normalPadding - 4),
+                child: TextButton(
+                  onPressed: () {
+                    _disMissMenu();
+                  },
+                  child: Text(
+                    'Login',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline5
+                        .copyWith(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: ConstantSize.smallPadding - 4,
+                    bottom: ConstantSize.semiLargePadding - 2,
+                    right: ConstantSize.normalPadding,
+                    left: ConstantSize.normalPadding),
+                child: RoundedButton(
+                    width: MediaQuery.of(context).size.width,
+                    height: ConstantSize.buttonMenuHeight,
+                    fontSize: 18,
+                    radius: ConstantSize.largeRadius,
+                    onPressed: () {
+                      _disMissMenu();
+                    },
+                    text: 'Sign Up'),
+              )
+            ],
+          ),
+        ),
+      );
+    });
+    overlayState.insert(_menuOverlay);
+  }
+
+  void _disMissMenu() {
+    _menuOverlay.remove();
+    _menuOverlay = null;
   }
 }
