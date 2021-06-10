@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shortening_mobile_app/data/service/short_code_service.dart';
 import 'package:shortening_mobile_app/screen/home_screen.dart';
-
 import 'bloc/shortcode/short_code_cubit.dart';
 import 'constant/constant_colors.dart';
 import 'constant/constant_routes.dart';
@@ -16,7 +15,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final ShortCodeService service;
-
   MyApp({this.service}); // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

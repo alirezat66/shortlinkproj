@@ -17,6 +17,7 @@ import 'package:shortening_mobile_app/helper/utility.dart';
 import 'package:shortening_mobile_app/widget/advance_note_list_view_widget.dart';
 import 'package:shortening_mobile_app/widget/footer_list_widget.dart';
 import 'package:shortening_mobile_app/widget/loading_dialog.dart';
+import 'package:shortening_mobile_app/widget/menu_item_widget.dart';
 import 'package:shortening_mobile_app/widget/rounded_button_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortening_mobile_app/widget/short_link_listview_widget.dart';
@@ -219,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: EdgeInsets.only(
                 top: _shortCodeList.links.length == 0
-                    ? ConstantSize.largePadding * 3
+                    ? ConstantSize.largePadding * 2
                     : ConstantSize.largePadding * 2,
                 left: ConstantSize.normalPadding * 2 - 1,
                 right: ConstantSize.normalPadding * 2 - 1),
@@ -479,115 +480,95 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showMenu(BuildContext context) async {
     OverlayState overlayState = Overlay.of(context);
     _menuOverlay = OverlayEntry(builder: (context) {
-      return Positioned(
-        top: kToolbarHeight +
-            ConstantSize.extraLargePadding +
-            ConstantSize.semiSmallPadding,
-        right: ConstantSize.normalPadding,
-        left: ConstantSize.normalPadding,
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(ConstantSize.smallRadius),
-            color: Theme.of(context).primaryColorDark,
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 28),
-                child: TextButton(
-                  onPressed: () {
-                    _disMissMenu();
-                  },
-                  child: Text(
-                    'Features',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        .copyWith(color: Colors.white, fontSize: 18),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: ConstantSize.semiSmallPadding + 2),
-                child: TextButton(
-                  onPressed: () {
-                    _disMissMenu();
-                  },
-                  child: Text(
-                    'Pricing',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        .copyWith(color: Colors.white, fontSize: 18),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: ConstantSize.semiSmallPadding - 2),
-                child: TextButton(
-                  onPressed: () {
-                    _disMissMenu();
-                  },
-                  child: Text(
-                    'Resources',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        .copyWith(color: Colors.white, fontSize: 18),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: ConstantSize.semiNormalPadding,
-                    right: ConstantSize.largePadding,
-                    left: ConstantSize.largePadding),
-                child: Divider(
-                  height: 1,
-                  color: ConstantColors.grayBackground.withOpacity(0.4),
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: ConstantSize.normalPadding - 4),
-                child: TextButton(
-                  onPressed: () {
-                    _disMissMenu();
-                  },
-                  child: Text(
-                    'Login',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        .copyWith(color: Colors.white, fontSize: 18),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: ConstantSize.smallPadding - 4,
-                    bottom: ConstantSize.semiLargePadding - 2,
-                    right: ConstantSize.normalPadding,
-                    left: ConstantSize.normalPadding),
-                child: RoundedButton(
-                    width: MediaQuery.of(context).size.width,
-                    height: ConstantSize.buttonMenuHeight,
-                    fontSize: 18,
-                    radius: ConstantSize.largeRadius,
-                    onPressed: () {
-                      _disMissMenu();
-                    },
-                    text: 'Sign Up'),
-              )
-            ],
-          ),
-        ),
-      );
+      return buildMenu(context);
     });
     overlayState.insert(_menuOverlay);
+  }
+
+  Positioned buildMenu(BuildContext context) {
+    return Positioned(
+      top: kToolbarHeight +
+          ConstantSize.extraLargePadding +
+          ConstantSize.semiSmallPadding,
+      right: ConstantSize.normalPadding,
+      left: ConstantSize.normalPadding,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(ConstantSize.smallRadius),
+          color: Theme.of(context).primaryColorDark,
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: ConstantSize.semiNormalPadding +
+                      ConstantSize.semiSmallPadding),
+              child: NavigationTextItem(
+                onPressed: () {
+                  _disMissMenu();
+                },
+                text: StringValue.menuFeature,
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.only(top: ConstantSize.semiSmallPadding + 2),
+              child: NavigationTextItem(
+                onPressed: () {
+                  _disMissMenu();
+                },
+                text: StringValue.menuPricing,
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.only(top: ConstantSize.semiSmallPadding - 2),
+              child: NavigationTextItem(
+                  onPressed: () {
+                    _disMissMenu();
+                  },
+                  text: StringValue.menuResources),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: ConstantSize.semiNormalPadding,
+                  right: ConstantSize.largePadding,
+                  left: ConstantSize.largePadding),
+              child: Divider(
+                height: 1,
+                color: ConstantColors.grayBackground.withOpacity(0.4),
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.only(top: ConstantSize.normalPadding - 4),
+              child: NavigationTextItem(
+                  onPressed: () {
+                    _disMissMenu();
+                  },
+                  text: StringValue.menuLogin),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: ConstantSize.smallPadding - 4,
+                  bottom: ConstantSize.semiLargePadding - 2,
+                  right: ConstantSize.normalPadding,
+                  left: ConstantSize.normalPadding),
+              child: RoundedButton(
+                  width: MediaQuery.of(context).size.width,
+                  height: ConstantSize.buttonMenuHeight,
+                  fontSize: 18,
+                  radius: ConstantSize.largeRadius,
+                  onPressed: () {
+                    _disMissMenu();
+                  },
+                  text: StringValue.signUp),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   void _disMissMenu() {

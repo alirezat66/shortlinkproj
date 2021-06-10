@@ -11,11 +11,12 @@ class ShortCodeCubit extends Cubit<ShortCodeState> {
   ShortCodeCubit(this.service) : super(ShortCodeInitial());
   void shortALink(String url) async {
     emit(ShortCodeLoading());
-    ShortCodeResult result = await service.shortLink(url);
-    if (result.isOk) {
-      emit(ShortCodeUrlDone(ShortCodeLink.fromJson(result.result)));
+
+    ShortCodeLink result = await service.shortLink(url);
+    emit(ShortCodeUrlDone(result));
+    /*if (result.isOk) {
     } else {
       emit(ShortCodeError(result.error));
-    }
+    }*/
   }
 }

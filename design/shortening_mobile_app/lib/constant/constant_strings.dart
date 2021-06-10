@@ -43,4 +43,10 @@ class StringValue {
   static const String loadingText = 'Connecting To Server ...';
   static const String copiedSuccessText = 'The link copied successfully';
   static const String urlCloud = 'https://api.shrtco.de/v2/';
+
+  static const String menuFeature = 'Features';
+  static const String menuPricing = 'Pricing';
+  static const String menuResources = 'Resources';
+  static const String menuLogin = 'Login';
+  static const String signUp = 'Sign Up';
 }
